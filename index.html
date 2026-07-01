@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MITESH07 — Gaming Arena</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Exo+2:wght@300;400;600;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --red: #FF8C00;
+    --red-bright: #FFA500;
+    --red-dark: #CC7000;
+    --black: #FFFFFF;
+    --black2: #F5F5F5;
+    --black3: #EAEAEA;
+    --white: #111111;
+    --gray: #888888;
+    --gray2: #CCCCCC;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Exo 2', sans-serif;
+    overflow-x: hidden;
+  }
+
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--black2); }
+  ::-webkit-scrollbar-thumb { background: var(--red); }
+
+  #particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 48px; height: 68px;
+    background: rgba(8,8,8,0.92);
+    border-bottom: 1px solid rgba(204,0,0,0.3);
+    backdrop-filter: blur(12px);
+  }
+  .nav-logo {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 26px; font-weight: 700; letter-spacing: 4px;
+    color: var(--white); text-decoration: none;
+  }
+  .nav-logo span { color: var(--red-bright); }
+  .nav-links { display: flex; gap: 36px; list-style: none; }
+  .nav-links a {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 13px; font-weight: 600; letter-spacing: 2px;
+    color: var(--gray); text-decoration: none; text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--red-bright); }
+  .nav-cta {
+    background: var(--red); color: var(--white);
+    padding: 8px 22px; font-family: 'Rajdhani', sans-serif;
+    font-size: 13px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; border: none; cursor: pointer;
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+    transition: background 0.2s;
+    text-decoration: none; display: inline-block;
+  }
+  .nav-cta:hover { background: var(--red-bright); }
+
+  .hero {
+    position: relative; z-index: 1;
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    text-align: center; padding: 120px 24px 60px;
+    overflow: hidden;
+  }
+  .hero-bg-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(204,0,0,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(204,0,0,0.06) 1px, transparent 1px);
+    background-size: 60px 60px;
+    animation: gridPulse 4s ease-in-out infinite;
+  }
+  @keyframes gridPulse { 0%,100% { opacity: 0.5; } 50% { opacity: 1; } }
+  .hero-scanlines {
+    position: absolute; inset: 0; pointer-events: none;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.15) 2px, rgba(0,0,0,0.15) 4px);
+    z-index: 2;
+  }
+  .hero-content { position: relative; z-index: 3; max-width: 900px; }
+  .hero-eyebrow {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px; letter-spacing: 6px; color: var(--red);
+    text-transform: uppercase; margin-bottom: 24px;
+    animation: fadeSlideUp 0.8s ease forwards;
+  }
+  .hero-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: clamp(72px, 14vw, 140px);
+    font-weight: 700; line-height: 0.9; letter-spacing: -2px;
+    animation: fadeSlideUp 0.8s 0.15s ease both;
+  }
+  .hero-title .line1 { display: block; color: var(--white); }
+  .hero-title .line2 { display: block; color: var(--red-bright); position: relative; }
+  .glitch { position: relative; display: inline-block; }
+  .glitch::before, .glitch::after {
+    content: attr(data-text);
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  }
+  .glitch::before {
+    color: var(--red-bright);
+    animation: glitch1 3s infinite;
+    clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
+  }
+  .glitch::after {
+    color: #fff;
+    animation: glitch2 3s infinite;
+    clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
+  }
+  @keyframes glitch1 {
+    0%,90%,100% { transform: none; opacity: 1; }
+    91% { transform: translate(-3px, 1px); opacity: 0.8; }
+    93% { transform: translate(3px, -1px); opacity: 0.8; }
+    95% { transform: none; opacity: 1; }
+  }
+  @keyframes glitch2 {
+    0%,90%,100% { transform: none; opacity: 1; }
+    92% { transform: translate(3px, 2px); opacity: 0.8; }
+    94% { transform: translate(-3px, -2px); opacity: 0.8; }
+    96% { transform: none; opacity: 1; }
+  }
+  .hero-sub {
+    font-size: 16px; font-weight: 300; color: var(--gray); letter-spacing: 2px;
+    margin: 28px 0 40px;
+    animation: fadeSlideUp 0.8s 0.3s ease both;
+  }
+  .hero-btns { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+    animation: fadeSlideUp 0.8s 0.45s ease both; }
+  .btn-primary {
+    background: var(--red); color: var(--white);
+    padding: 14px 36px; font-family: 'Rajdhani', sans-serif;
+    font-size: 14px; font-weight: 700; letter-spacing: 3px;
+    text-transform: uppercase; border: none; cursor: pointer;
+    clip-path: polygon(12px 0%, 100% 0%, calc(100% - 12px) 100%, 0% 100%);
+    transition: background 0.2s, transform 0.2s; text-decoration: none;
+  }
+  .btn-primary:hover { background: var(--red-bright); transform: translateY(-2px); }
+  .btn-outline {
+    background: transparent; color: var(--white);
+    padding: 13px 36px; font-family: 'Rajdhani', sans-serif;
+    font-size: 14px; font-weight: 700; letter-spacing: 3px;
+    text-transform: uppercase; cursor: pointer;
+    border: 1px solid rgba(255,255,255,0.3);
+    clip-path: polygon(12px 0%, 100% 0%, calc(100% - 12px) 100%, 0% 100%);
+    transition: border-color 0.2s, color 0.2s; text-decoration: none;
+  }
+  .btn-outline:hover { border-color: var(--red-bright); color: var(--red-bright); }
+  .hero-stats {
+    display: flex; gap: 60px; justify-content: center; margin-top: 72px;
+    animation: fadeSlideUp 0.8s 0.6s ease both;
+  }
+  .stat { text-align: center; }
+  .stat-num {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 42px; font-weight: 700; color: var(--red-bright); line-height: 1;
+  }
+  .stat-label {
+    font-size: 11px; letter-spacing: 3px; color: var(--gray);
+    text-transform: uppercase; margin-top: 4px;
+  }
+  .hero-scroll {
+    position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 8px; z-index: 3;
+  }
+  .scroll-line {
+    width: 1px; height: 40px;
+    background: linear-gradient(to bottom, var(--red), transparent);
+    animation: scrollBounce 1.5s ease-in-out infinite;
+  }
+  @keyframes scrollBounce { 0%,100% { opacity: 0.4; } 50% { opacity: 1; } }
+
+  section { position: relative; z-index: 1; }
+  .section-header { text-align: center; margin-bottom: 60px; }
+  .section-eyebrow {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px; letter-spacing: 5px; color: var(--red);
+    text-transform: uppercase; margin-bottom: 12px;
+  }
+  .section-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: clamp(36px, 5vw, 56px); font-weight: 700;
+    line-height: 1; letter-spacing: -1px;
+  }
+  .section-title span { color: var(--red-bright); }
+  .red-line { width: 60px; height: 3px; background: var(--red); margin: 20px auto 0; }
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+  #games { padding: 100px 0; background: var(--black2); }
+  .games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 24px;
+  }
+  .game-card {
+    background: var(--black3); border: 1px solid var(--gray2);
+    position: relative; overflow: hidden; cursor: pointer;
+    transition: border-color 0.3s, transform 0.3s;
+    clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
+  }
+  .game-card:hover { border-color: var(--red); transform: translateY(-6px); }
+  .game-card-glow {
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at 50% 0%, rgba(204,0,0,0.15), transparent 70%);
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .game-card:hover .game-card-glow { opacity: 1; }
+  .game-icon {
+    width: 100%; height: 180px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 64px; background: rgba(0,0,0,0.5); position: relative;
+  }
+  .game-badge {
+    position: absolute; top: 12px; right: 12px;
+    background: var(--red); color: var(--white);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px; letter-spacing: 2px; padding: 3px 10px; text-transform: uppercase;
+  }
+  .game-info { padding: 24px; }
+  .game-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 22px; font-weight: 700; letter-spacing: 1px; margin-bottom: 6px;
+  }
+  .game-desc { font-size: 13px; color: var(--gray); line-height: 1.6; margin-bottom: 20px; }
+  .game-meta { display: flex; justify-content: space-between; align-items: center; }
+  .game-difficulty {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px; letter-spacing: 2px; color: var(--red);
+  }
+  .play-btn {
+    background: var(--red); color: var(--white); border: none; padding: 8px 20px;
+    font-family: 'Rajdhani', sans-serif; font-size: 13px; font-weight: 700;
+    letter-spacing: 2px; text-transform: uppercase; cursor: pointer;
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+    transition: background 0.2s;
+  }
+  .play-btn:hover { background: var(--red-bright); }
+
+  #leaderboard { padding: 100px 0; }
+  .leaderboard-table { width: 100%; border-collapse: collapse; }
+  .leaderboard-table th {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px; letter-spacing: 3px; color: var(--red);
+    text-transform: uppercase; padding: 14px 20px;
+    border-bottom: 1px solid var(--red-dark); text-align: left;
+  }
+  .leaderboard-table td {
+    padding: 16px 20px; font-size: 14px;
+    border-bottom: 1px solid var(--gray2); transition: background 0.2s;
+  }
+  .leaderboard-table tr:hover td { background: rgba(204,0,0,0.05); }
+  .rank-num { font-family: 'Rajdhani', sans-serif; font-size: 20px; font-weight: 700; color: var(--gray); width: 50px; }
+  .rank-1 .rank-num { color: #FFD700; }
+  .rank-2 .rank-num { color: #C0C0C0; }
+  .rank-3 .rank-num { color: #CD7F32; }
+  .player-name { font-family: 'Rajdhani', sans-serif; font-size: 16px; font-weight: 600; }
+  .player-tag { font-size: 12px; color: var(--gray); margin-left: 8px; font-family: 'Share Tech Mono', monospace; }
+  .score-val { font-family: 'Rajdhani', sans-serif; font-size: 18px; font-weight: 700; color: var(--red-bright); }
+  .game-tag { display: inline-block; background: var(--gray2); font-size: 11px; letter-spacing: 1px; padding: 3px 10px; font-family: 'Share Tech Mono', monospace; }
+
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; z-index: 1000;
+    background: rgba(0,0,0,0.92); align-items: center; justify-content: center;
+    backdrop-filter: blur(8px);
+  }
+  .modal-overlay.active { display: flex; }
+  .modal {
+    background: var(--black2); border: 1px solid var(--red-dark);
+    max-width: 700px; width: 95%; max-height: 90vh; overflow-y: auto; position: relative;
+    clip-path: polygon(0 0, calc(100% - 24px) 0, 100% 24px, 100% 100%, 24px 100%, 0 calc(100% - 24px));
+  }
+  .modal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 28px; border-bottom: 1px solid var(--gray2);
+  }
+  .modal-title { font-family: 'Rajdhani', sans-serif; font-size: 22px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; }
+  .modal-close {
+    background: var(--red); border: none; color: var(--white);
+    width: 32px; height: 32px; cursor: pointer; font-size: 18px;
+    display: flex; align-items: center; justify-content: center; transition: background 0.2s;
+  }
+  .modal-close:hover { background: var(--red-bright); }
+  .modal-body { padding: 28px; }
+  .game-ui { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+  .score-display { display: flex; gap: 40px; font-family: 'Rajdhani', sans-serif; font-size: 18px; font-weight: 600; }
+  .score-display span { color: var(--red-bright); font-size: 24px; }
+  canvas { border: 1px solid var(--gray2); display: block; max-width: 100%; }
+  .game-controls { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+  .ctrl-btn {
+    background: var(--gray2); color: var(--white); border: 1px solid var(--gray);
+    padding: 8px 20px; font-family: 'Rajdhani', sans-serif;
+    font-size: 13px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; cursor: pointer; transition: all 0.2s;
+  }
+  .ctrl-btn:hover { background: var(--red); border-color: var(--red); }
+  .ctrl-btn.primary { background: var(--red); border-color: var(--red); }
+  .ctrl-btn.primary:hover { background: var(--red-bright); }
+  .game-msg { font-family: 'Share Tech Mono', monospace; font-size: 13px; color: var(--gray); text-align: center; letter-spacing: 1px; min-height: 20px; }
+
+  .memory-grid { display: grid; grid-template-columns: repeat(4, 80px); gap: 10px; justify-content: center; }
+  .mem-card { width: 80px; height: 80px; cursor: pointer; perspective: 500px; position: relative; }
+  .mem-inner { width: 100%; height: 100%; transform-style: preserve-3d; transition: transform 0.4s; position: relative; }
+  .mem-card.flipped .mem-inner { transform: rotateY(180deg); }
+  .mem-card.matched .mem-inner { transform: rotateY(180deg); }
+  .mem-front, .mem-back { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; backface-visibility: hidden; font-size: 32px; border: 1px solid var(--gray2); }
+  .mem-front { background: var(--black3); }
+  .mem-back { background: var(--red-dark); transform: rotateY(180deg); }
+  .mem-card.matched .mem-back { background: #1a4a00; border-color: #00cc44; }
+
+  .wam-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; max-width: 300px; }
+  .wam-hole {
+    width: 90px; height: 90px; background: #0a0a0a;
+    border: 2px solid var(--gray2); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 40px; cursor: pointer; user-select: none;
+    transition: transform 0.1s; position: relative; overflow: hidden;
+  }
+  .wam-hole:active { transform: scale(0.92); }
+  .wam-mole { transition: transform 0.15s; transform: translateY(100%); }
+  .wam-hole.active .wam-mole { transform: translateY(0); }
+  .wam-hole.bonk { background: rgba(204,0,0,0.3); }
+
+  .reaction-box {
+    width: 320px; height: 200px; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; user-select: none; font-size: 20px;
+    font-family: 'Rajdhani', sans-serif; font-weight: 700; letter-spacing: 2px;
+    border: 2px solid var(--gray2); transition: all 0.1s; background: var(--black3);
+    text-align: center; line-height: 1.4;
+  }
+  .reaction-box.waiting { background: #1a1a00; border-color: #666600; color: #ffcc00; }
+  .reaction-box.go { background: #001a00; border-color: #00cc44; color: #00ff55; }
+  .reaction-box.too-early { background: #1a0000; border-color: var(--red); color: var(--red-bright); }
+
+  #snakeCanvas { background: #050505; }
+
+  #features { padding: 100px 0; background: var(--black2); }
+  .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 2px; background: var(--gray2); }
+  .feature-item { background: var(--black2); padding: 40px 32px; position: relative; overflow: hidden; transition: background 0.3s; }
+  .feature-item:hover { background: var(--black3); }
+  .feature-item::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 0; background: var(--red); transition: height 0.3s; }
+  .feature-item:hover::before { height: 100%; }
+  .feature-icon { font-size: 36px; margin-bottom: 20px; }
+  .feature-title { font-family: 'Rajdhani', sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 10px; }
+  .feature-text { font-size: 13px; color: var(--gray); line-height: 1.7; }
+
+  footer { padding: 60px 0 32px; background: var(--black); border-top: 1px solid var(--gray2); }
+  .footer-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 24px; }
+  .footer-logo { font-family: 'Rajdhani', sans-serif; font-size: 28px; font-weight: 700; letter-spacing: 4px; }
+  .footer-logo span { color: var(--red-bright); }
+  .footer-links { display: flex; gap: 32px; list-style: none; }
+  .footer-links a { font-size: 12px; letter-spacing: 2px; color: var(--gray); text-decoration: none; text-transform: uppercase; font-family: 'Rajdhani', sans-serif; font-weight: 600; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--red-bright); }
+  .footer-copy { text-align: center; margin-top: 40px; font-size: 12px; color: var(--gray2); font-family: 'Share Tech Mono', monospace; }
+
+  @keyframes fadeSlideUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+  .reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.7s, transform 0.7s; }
+  .reveal.visible { opacity: 1; transform: none; }
+
+  .ticker-wrap { overflow: hidden; background: var(--red); padding: 10px 0; white-space: nowrap; }
+  .ticker-inner { display: inline-block; animation: ticker 20s linear infinite; font-family: 'Share Tech Mono', monospace; font-size: 12px; letter-spacing: 3px; color: var(--white); }
+  @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+  @media (max-width: 768px) {
+    nav { padding: 0 20px; }
+    .nav-links { display: none; }
+    .hero-stats { gap: 32px; }
+    .memory-grid { grid-template-columns: repeat(4, 68px); }
+    .mem-card { width: 68px; height: 68px; }
+    .reaction-box { width: 260px; height: 160px; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+
+<nav>
+  <a href="#" class="nav-logo">MITESH<span>07</span></a>
+  <ul class="nav-links">
+    <li><a href="#games">Games</a></li>
+    <li><a href="#leaderboard">Ranks</a></li>
+    <li><a href="#features">Arena</a></li>
+  </ul>
+  <a href="#games" class="nav-cta">Play Now</a>
+</nav>
+
+<section class="hero" id="home">
+  <div class="hero-bg-grid"></div>
+  <div class="hero-scanlines"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">// WELCOME TO THE ARENA //</div>
+    <h1 class="hero-title">
+      <span class="line1">MITESH</span>
+      <span class="line2"><span class="glitch" data-text="07">07</span></span>
+    </h1>
+    <p class="hero-sub">DOMINATE · COMPETE · CONQUER</p>
+    <div class="hero-btns">
+      <a href="#games" class="btn-primary">Enter Arena</a>
+      <a href="#leaderboard" class="btn-outline">Leaderboard</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-num" data-target="4">0</div><div class="stat-label">Games</div></div>
+      <div class="stat"><div class="stat-num" data-target="2400">0</div><div class="stat-label">Players</div></div>
+      <div class="stat"><div class="stat-num" data-target="99">0</div><div class="stat-label">Missions</div></div>
+    </div>
+  </div>
+  <div class="hero-scroll"><div class="scroll-line"></div></div>
+</section>
+
+<div class="ticker-wrap">
+  <div class="ticker-inner">
+    &nbsp;&nbsp;⚡ SNAKE ATTACK &nbsp;///&nbsp; 🎯 WHACK-A-MOLE CHAMPIONSHIP &nbsp;///&nbsp; 🃏 MEMORY MASTER &nbsp;///&nbsp; ⚡ REACTION TIME CHALLENGE &nbsp;///&nbsp; 🏆 NEW RECORDS DAILY &nbsp;///&nbsp; ⚡ SNAKE ATTACK &nbsp;///&nbsp; 🎯 WHACK-A-MOLE CHAMPIONSHIP &nbsp;///&nbsp; 🃏 MEMORY MASTER &nbsp;///&nbsp; ⚡ REACTION TIME CHALLENGE &nbsp;///&nbsp; 🏆 NEW RECORDS DAILY &nbsp;///&nbsp;
+  </div>
+</div>
+
+<section id="games">
+  <div class="container" style="padding: 100px 24px;">
+    <div class="section-header reveal">
+      <div class="section-eyebrow">// SELECT GAME //</div>
+      <h2 class="section-title">CHOOSE YOUR <span>BATTLE</span></h2>
+      <div class="red-line"></div>
+    </div>
+    <div class="games-grid">
+      <div class="game-card reveal" onclick="openGame('snake')">
+        <div class="game-card-glow"></div>
+        <div class="game-icon" style="background: linear-gradient(135deg, #0a0a0a, #1a0000);">🐍<span class="game-badge">Classic</span></div>
+        <div class="game-info">
+          <div class="game-title">SNAKE ATTACK</div>
+          <div class="game-desc">Navigate the arena, eat the targets, grow longer. One wrong move ends it all.</div>
+          <div class="game-meta"><span class="game-difficulty">MEDIUM</span><button class="play-btn">PLAY</button></div>
+        </div>
+      </div>
+      <div class="game-card reveal" onclick="openGame('memory')" style="transition-delay:0.1s">
+        <div class="game-card-glow"></div>
+        <div class="game-icon" style="background: linear-gradient(135deg, #0a0000, #1a0a0a);">🃏<span class="game-badge">Brain</span></div>
+        <div class="game-info">
+          <div class="game-title">MEMORY MASTER</div>
+          <div class="game-desc">Flip and match pairs before time runs out. Test your memory against the machine.</div>
+          <div class="game-meta"><span class="game-difficulty">EASY</span><button class="play-btn">PLAY</button></div>
+        </div>
+      </div>
+      <div class="game-card reveal" onclick="openGame('wam')" style="transition-delay:0.2s">
+        <div class="game-card-glow"></div>
+        <div class="game-icon" style="background: linear-gradient(135deg, #150000, #0a0a0a);">🔨<span class="game-badge">Action</span></div>
+        <div class="game-info">
+          <div class="game-title">WHACK-A-MOLE</div>
+          <div class="game-desc">Moles pop up fast and unpredictably. Smash them for points before they disappear.</div>
+          <div class="game-meta"><span class="game-difficulty">FAST</span><button class="play-btn">PLAY</button></div>
+        </div>
+      </div>
+      <div class="game-card reveal" onclick="openGame('reaction')" style="transition-delay:0.3s">
+        <div class="game-card-glow"></div>
+        <div class="game-icon" style="background: linear-gradient(135deg, #0a0a0a, #200000);">⚡<span class="game-badge">Reflex</span></div>
+        <div class="game-info">
+          <div class="game-title">REACTION STRIKE</div>
+          <div class="game-desc">Green means GO. Click the instant it appears. Milliseconds separate legends from losers.</div>
+          <div class="game-meta"><span class="game-difficulty">INSTANT</span><button class="play-btn">PLAY</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="leaderboard" style="padding: 100px 0; background: var(--black2);">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-eyebrow">// TOP PLAYERS //</div>
+      <h2 class="section-title">HALL OF <span>FAME</span></h2>
+      <div class="red-line"></div>
+    </div>
+    <div class="reveal">
+      <table class="leaderboard-table">
+        <thead>
+          <tr><th>#</th><th>Player</th><th>Game</th><th>Score</th><th>Wins</th></tr>
+        </thead>
+        <tbody>
+          <tr class="rank-1"><td class="rank-num">01</td><td><span class="player-name">MITESH</span><span class="player-tag">#07</span></td><td><span class="game-tag">SNAKE</span></td><td class="score-val">48,200</td><td style="color:var(--gray)">142</td></tr>
+          <tr class="rank-2"><td class="rank-num">02</td><td><span class="player-name">SHADOW_X</span><span class="player-tag">#99</span></td><td><span class="game-tag">REACTION</span></td><td class="score-val">41,750</td><td style="color:var(--gray)">118</td></tr>
+          <tr class="rank-3"><td class="rank-num">03</td><td><span class="player-name">REDZONE</span><span class="player-tag">#44</span></td><td><span class="game-tag">MEMORY</span></td><td class="score-val">39,100</td><td style="color:var(--gray)">97</td></tr>
+          <tr><td class="rank-num">04</td><td><span class="player-name">GHOST_GG</span><span class="player-tag">#12</span></td><td><span class="game-tag">WHACK</span></td><td class="score-val">35,640</td><td style="color:var(--gray)">83</td></tr>
+          <tr><td class="rank-num">05</td><td><span class="player-name">FURY_7</span><span class="player-tag">#21</span></td><td><span class="game-tag">SNAKE</span></td><td class="score-val">31,900</td><td style="color:var(--gray)">71</td></tr>
+          <tr><td class="rank-num">06</td><td><span class="player-name">NEON_KILL</span><span class="player-tag">#88</span></td><td><span class="game-tag">REACTION</span></td><td class="score-val">28,500</td><td style="color:var(--gray)">64</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="features">
+  <div class="container" style="padding: 100px 24px;">
+    <div class="section-header reveal">
+      <div class="section-eyebrow">// ARENA FEATURES //</div>
+      <h2 class="section-title">THE <span>MITESH07</span> EDGE</h2>
+      <div class="red-line"></div>
+    </div>
+    <div class="features-grid reveal">
+      <div class="feature-item"><div class="feature-icon">🎮</div><div class="feature-title">4 Playable Games</div><div class="feature-text">Snake, Memory, Whack-a-Mole, and Reaction Strike — all live, no installs required.</div></div>
+      <div class="feature-item"><div class="feature-icon">🏆</div><div class="feature-title">Live Leaderboards</div><div class="feature-text">Compete for the top spot. Rankings updated in real time after every session.</div></div>
+      <div class="feature-item"><div class="feature-icon">⚡</div><div class="feature-title">Instant Play</div><div class="feature-text">No sign-up. No wait. Click play and jump straight into the action within seconds.</div></div>
+      <div class="feature-item"><div class="feature-icon">🔴</div><div class="feature-title">Red Zone Difficulty</div><div class="feature-text">Games scale in intensity. Beginners welcome — but only the best survive the Red Zone.</div></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-logo">MITESH<span>07</span></div>
+      <ul class="footer-links">
+        <li><a href="#home">Home</a></li>
+        <li><a href="#games">Games</a></li>
+        <li><a href="#leaderboard">Ranks</a></li>
+        <li><a href="#features">Arena</a></li>
+      </ul>
+    </div>
+    <div class="footer-copy">© 2025 MITESH07 GAMING ARENA &nbsp;///&nbsp; ALL RIGHTS RESERVED</div>
+  </div>
+</footer>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="modal-snake">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">🐍 Snake Attack</div><button class="modal-close" onclick="closeModal('snake')">✕</button></div>
+    <div class="modal-body">
+      <div class="game-ui">
+        <div class="score-display"><div>Score: <span id="snake-score">0</span></div><div>Best: <span id="snake-best">0</span></div></div>
+        <canvas id="snakeCanvas" width="400" height="400"></canvas>
+        <div class="game-controls"><button class="ctrl-btn primary" id="snake-start-btn" onclick="startSnake()">START</button></div>
+        <div class="game-msg" id="snake-msg">Press START or Arrow Keys to begin</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-memory">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">🃏 Memory Master</div><button class="modal-close" onclick="closeModal('memory')">✕</button></div>
+    <div class="modal-body">
+      <div class="game-ui">
+        <div class="score-display"><div>Moves: <span id="mem-moves">0</span></div><div>Matches: <span id="mem-matches">0</span></div></div>
+        <div class="memory-grid" id="memory-grid"></div>
+        <div class="game-controls"><button class="ctrl-btn primary" onclick="initMemory()">NEW GAME</button></div>
+        <div class="game-msg" id="mem-msg">Match all 8 pairs to win!</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-wam">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">🔨 Whack-a-Mole</div><button class="modal-close" onclick="closeModal('wam')">✕</button></div>
+    <div class="modal-body">
+      <div class="game-ui">
+        <div class="score-display"><div>Score: <span id="wam-score">0</span></div><div>Time: <span id="wam-time">30</span>s</div></div>
+        <div class="wam-grid" id="wam-grid"></div>
+        <div class="game-controls"><button class="ctrl-btn primary" id="wam-btn" onclick="startWam()">START</button></div>
+        <div class="game-msg" id="wam-msg">Smash the moles! 30 seconds on the clock.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-reaction">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">⚡ Reaction Strike</div><button class="modal-close" onclick="closeModal('reaction')">✕</button></div>
+    <div class="modal-body">
+      <div class="game-ui">
+        <div class="score-display"><div>Last: <span id="rt-last">--</span>ms</div><div>Best: <span id="rt-best">--</span>ms</div></div>
+        <div class="reaction-box" id="reaction-box" onclick="reactionClick()">CLICK TO START</div>
+        <div class="game-msg" id="rt-msg">Click the box to begin. React when it turns GREEN.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const pc = document.getElementById('particles');
+const pctx = pc.getContext('2d');
+let particles = [];
+function resizeParticles() { pc.width = window.innerWidth; pc.height = window.innerHeight; }
+resizeParticles();
+window.addEventListener('resize', resizeParticles);
+for (let i = 0; i < 60; i++) {
+  particles.push({ x: Math.random() * pc.width, y: Math.random() * pc.height, vx: (Math.random() - 0.5) * 0.4, vy: (Math.random() - 0.5) * 0.4, r: Math.random() * 1.5 + 0.3, a: Math.random() * 0.5 + 0.1, red: Math.random() > 0.7 });
+}
+function animParticles() {
+  pctx.clearRect(0, 0, pc.width, pc.height);
+  particles.forEach(p => {
+    p.x += p.vx; p.y += p.vy;
+    if (p.x < 0) p.x = pc.width; if (p.x > pc.width) p.x = 0;
+    if (p.y < 0) p.y = pc.height; if (p.y > pc.height) p.y = 0;
+    pctx.beginPath(); pctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    pctx.fillStyle = p.red ? `rgba(204,0,0,${p.a})` : `rgba(255,255,255,${p.a * 0.4})`;
+    pctx.fill();
+  });
+  requestAnimationFrame(animParticles);
+}
+animParticles();
+
+function animateCounter(el, target, duration) {
+  let start = 0; const step = target / (duration / 16);
+  const timer = setInterval(() => {
+    start = Math.min(start + step, target);
+    el.textContent = Math.floor(start).toLocaleString();
+    if (start >= target) clearInterval(timer);
+  }, 16);
+}
+const statNums = document.querySelectorAll('.stat-num[data-target]');
+const statsObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { animateCounter(e.target, +e.target.dataset.target, 1500); statsObserver.unobserve(e.target); } });
+});
+statNums.forEach(n => statsObserver.observe(n));
+
+const revealObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+function openGame(id) {
+  document.getElementById('modal-' + id).classList.add('active');
+  document.body.style.overflow = 'hidden';
+  if (id === 'memory') initMemory();
+  if (id === 'wam') initWam();
+  if (id === 'reaction') initReaction();
+}
+function closeModal(id) {
+  document.getElementById('modal-' + id).classList.remove('active');
+  document.body.style.overflow = '';
+  if (id === 'snake') stopSnake();
+  if (id === 'wam') stopWam();
+  if (id === 'reaction') stopReaction();
+}
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if (e.target === m) { const id = m.id.replace('modal-', ''); closeModal(id); } });
+});
+
+const sc = document.getElementById('snakeCanvas');
+const sctx = sc.getContext('2d');
+const CELL = 20; const COLS = sc.width / CELL; const ROWS = sc.height / CELL;
+let snake, dir, nextDir, food, snakeScore, snakeBest = 0, snakeInterval, snakeRunning = false;
+function startSnake() {
+  snake = [{x:10,y:10},{x:9,y:10},{x:8,y:10}];
+  dir = {x:1,y:0}; nextDir = {x:1,y:0}; snakeScore = 0;
+  placeFood();
+  document.getElementById('snake-score').textContent = 0;
+  document.getElementById('snake-msg').textContent = 'Arrow keys / WASD to move';
+  document.getElementById('snake-start-btn').textContent = 'RESTART';
+  snakeRunning = true; clearInterval(snakeInterval);
+  snakeInterval = setInterval(snakeTick, 120);
+}
+function stopSnake() { clearInterval(snakeInterval); snakeRunning = false; }
+function placeFood() {
+  do { food = {x: Math.floor(Math.random()*COLS), y: Math.floor(Math.random()*ROWS)}; }
+  while (snake.some(s => s.x===food.x && s.y===food.y));
+}
+function snakeTick() {
+  dir = {...nextDir};
+  const head = {x: snake[0].x+dir.x, y: snake[0].y+dir.y};
+  if (head.x<0||head.x>=COLS||head.y<0||head.y>=ROWS||snake.some(s=>s.x===head.x&&s.y===head.y)) {
+    clearInterval(snakeInterval); snakeRunning = false;
+    snakeBest = Math.max(snakeBest, snakeScore);
+    document.getElementById('snake-best').textContent = snakeBest;
+    document.getElementById('snake-msg').textContent = `GAME OVER! Score: ${snakeScore}. Press RESTART.`;
+    drawSnake(); return;
+  }
+  snake.unshift(head);
+  if (head.x===food.x && head.y===food.y) { snakeScore+=10; document.getElementById('snake-score').textContent=snakeScore; placeFood(); }
+  else { snake.pop(); }
+  drawSnake();
+}
+function drawSnake() {
+  sctx.fillStyle='#050505'; sctx.fillRect(0,0,sc.width,sc.height);
+  sctx.strokeStyle='rgba(255,255,255,0.03)';
+  for(let x=0;x<COLS;x++) for(let y=0;y<ROWS;y++) sctx.strokeRect(x*CELL,y*CELL,CELL,CELL);
+  sctx.fillStyle='#FF1A1A'; sctx.shadowBlur=12; sctx.shadowColor='#FF1A1A';
+  sctx.fillRect(food.x*CELL+3,food.y*CELL+3,CELL-6,CELL-6); sctx.shadowBlur=0;
+  snake.forEach((s,i)=>{
+    const ratio=i/snake.length;
+    sctx.fillStyle=i===0?'#ffffff':`rgba(200,${Math.floor(200*(1-ratio))},${Math.floor(200*(1-ratio))},${1-ratio*0.4})`;
+    sctx.fillRect(s.x*CELL+1,s.y*CELL+1,CELL-2,CELL-2);
+  });
+}
+document.addEventListener('keydown', e => {
+  if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','w','a','s','d'].includes(e.key)) e.preventDefault();
+  if(!snakeRunning){if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key))startSnake();return;}
+  if((e.key==='ArrowUp'||e.key==='w')&&dir.y===0) nextDir={x:0,y:-1};
+  if((e.key==='ArrowDown'||e.key==='s')&&dir.y===0) nextDir={x:0,y:1};
+  if((e.key==='ArrowLeft'||e.key==='a')&&dir.x===0) nextDir={x:-1,y:0};
+  if((e.key==='ArrowRight'||e.key==='d')&&dir.x===0) nextDir={x:1,y:0};
+});
+(function(){ sctx.fillStyle='#050505'; sctx.fillRect(0,0,sc.width,sc.height); sctx.fillStyle='rgba(204,0,0,0.5)'; sctx.font="bold 22px 'Rajdhani',sans-serif"; sctx.textAlign='center'; sctx.fillText('PRESS START',sc.width/2,sc.height/2); })();
+
+const EMOJIS=['🔥','⚡','💀','🎯','🗡️','🛡️','💣','🏆'];
+let memCards=[],memFlipped=[],memMoves=0,memMatches=0,memLocked=false;
+function initMemory(){
+  const pairs=[...EMOJIS,...EMOJIS].sort(()=>Math.random()-0.5);
+  memCards=[];memFlipped=[];memMoves=0;memMatches=0;memLocked=false;
+  document.getElementById('mem-moves').textContent=0;
+  document.getElementById('mem-matches').textContent=0;
+  document.getElementById('mem-msg').textContent='Match all 8 pairs to win!';
+  const grid=document.getElementById('memory-grid'); grid.innerHTML='';
+  pairs.forEach((emoji,i)=>{
+    const card=document.createElement('div'); card.className='mem-card';
+    card.innerHTML=`<div class="mem-inner"><div class="mem-front"></div><div class="mem-back">${emoji}</div></div>`;
+    card.dataset.emoji=emoji; card.dataset.index=i;
+    card.addEventListener('click',()=>flipCard(card)); grid.appendChild(card); memCards.push(card);
+  });
+}
+function flipCard(card){
+  if(memLocked||card.classList.contains('flipped')||card.classList.contains('matched'))return;
+  card.classList.add('flipped'); memFlipped.push(card);
+  if(memFlipped.length===2){
+    memLocked=true; memMoves++; document.getElementById('mem-moves').textContent=memMoves;
+    setTimeout(()=>{
+      if(memFlipped[0].dataset.emoji===memFlipped[1].dataset.emoji){
+        memFlipped.forEach(c=>c.classList.add('matched')); memMatches++;
+        document.getElementById('mem-matches').textContent=memMatches;
+        if(memMatches===8) document.getElementById('mem-msg').textContent=`🏆 YOU WIN! ${memMoves} moves.`;
+      } else { memFlipped.forEach(c=>c.classList.remove('flipped')); }
+      memFlipped=[]; memLocked=false;
+    },900);
+  }
+}
+
+let wamScore=0,wamTime=30,wamRunning=false,wamHoleInterval,wamTimerInterval;
+function initWam(){
+  const grid=document.getElementById('wam-grid'); grid.innerHTML='';
+  for(let i=0;i<9;i++){
+    const hole=document.createElement('div'); hole.className='wam-hole';
+    hole.innerHTML='<div class="wam-mole">🐭</div>'; hole.dataset.index=i;
+    hole.addEventListener('click',()=>whack(hole)); grid.appendChild(hole);
+  }
+  wamScore=0;wamTime=30;
+  document.getElementById('wam-score').textContent=0;
+  document.getElementById('wam-time').textContent=30;
+  document.getElementById('wam-msg').textContent='Smash the moles! 30 seconds on the clock.';
+  document.getElementById('wam-btn').textContent='START';
+}
+function startWam(){
+  if(wamRunning){stopWam();initWam();return;}
+  wamRunning=true; document.getElementById('wam-btn').textContent='RESTART';
+  document.getElementById('wam-msg').textContent='SMASH THEM!';
+  wamHoleInterval=setInterval(showMole,700);
+  wamTimerInterval=setInterval(()=>{
+    wamTime--; document.getElementById('wam-time').textContent=wamTime;
+    if(wamTime<=0){stopWam();document.getElementById('wam-msg').textContent=`TIME UP! Score: ${wamScore}`;document.getElementById('wam-btn').textContent='PLAY AGAIN';}
+  },1000);
+}
+function stopWam(){
+  wamRunning=false; clearInterval(wamHoleInterval); clearInterval(wamTimerInterval);
+  document.querySelectorAll('#wam-grid .wam-hole').forEach(h=>h.classList.remove('active'));
+}
+function showMole(){
+  const holes=document.querySelectorAll('#wam-grid .wam-hole');
+  const available=[...holes].filter(h=>!h.classList.contains('active'));
+  if(!available.length)return;
+  const hole=available[Math.floor(Math.random()*available.length)];
+  hole.classList.add('active');
+  setTimeout(()=>hole.classList.remove('active'),Math.max(600,1200-wamScore*2));
+}
+function whack(hole){
+  if(!wamRunning||!hole.classList.contains('active'))return;
+  hole.classList.remove('active'); hole.classList.add('bonk');
+  wamScore+=10; document.getElementById('wam-score').textContent=wamScore;
+  setTimeout(()=>hole.classList.remove('bonk'),200);
+}
+
+let rtState='idle',rtStart,rtTimeout,rtBest=null;
+function initReaction(){
+  rtState='idle';
+  const box=document.getElementById('reaction-box');
+  box.className='reaction-box'; box.textContent='CLICK TO START';
+  document.getElementById('rt-last').textContent='--';
+  document.getElementById('rt-best').textContent='--';
+  document.getElementById('rt-msg').textContent='Click the box to begin. React when it turns GREEN.';
+  rtBest=null;
+}
+function stopReaction(){ clearTimeout(rtTimeout); rtState='idle'; }
+function reactionClick(){
+  if(rtState==='idle'){
+    rtState='waiting';
+    const box=document.getElementById('reaction-box');
+    box.className='reaction-box waiting'; box.textContent='WAIT FOR GREEN...';
+    document.getElementById('rt-msg').textContent='Stay focused...';
+    rtTimeout=setTimeout(()=>{
+      rtState='go'; rtStart=Date.now();
+      box.className='reaction-box go'; box.textContent='CLICK NOW!!!';
+      document.getElementById('rt-msg').textContent='⚡ GO GO GO!';
+    },1500+Math.random()*3500);
+  } else if(rtState==='waiting'){
+    clearTimeout(rtTimeout); rtState='idle';
+    const box=document.getElementById('reaction-box');
+    box.className='reaction-box too-early'; box.textContent='TOO EARLY! Click to try again.';
+    document.getElementById('rt-msg').textContent='Wait for GREEN before clicking!';
+  } else if(rtState==='go'){
+    const ms=Date.now()-rtStart; rtState='idle';
+    const box=document.getElementById('reaction-box');
+    box.className='reaction-box'; box.textContent=`${ms}ms — Click to play again`;
+    document.getElementById('rt-last').textContent=ms;
+    if(rtBest===null||ms<rtBest){rtBest=ms;document.getElementById('rt-best').textContent=ms;}
+    const rating=ms<200?'⚡ SUPERHUMAN!':ms<300?'🔥 GREAT!':ms<450?'👍 GOOD':'🐢 TOO SLOW';
+    document.getElementById('rt-msg').textContent=`${rating} — ${ms}ms`;
+  }
+}
+</script>
+</body>
+</html>
